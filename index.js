@@ -17,7 +17,7 @@ app.use(bodyParser.urlencoded({extended: false}));
 app.use(express.static("./public"));
 
 app.get('/berlinevents', function(req, res){
-    db.query('SELECT * FROM links').then(function(results) {
+    db.query('SELECT * FROM links ORDER by created_at DESC').then(function(results) {
         console.log("getLink");
         console.log(results.rows);
         res.json(
