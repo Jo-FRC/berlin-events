@@ -4,21 +4,21 @@ myApp.controller('linkUpdate', function($scope, $http) {
     var url = '/berlinevents';
     delete $scope.success;
     delete $scope.linkUpload;
-    delete $scope.recentLikns;
+    delete $scope.recentLinks;
+    $scope.recentLinks = [];
+    $scope.link = {};
     $http.get(url).then(function(result){
-        $scope.recentLikns = result.data.links;
+        console.log(result.data.links);
+
+        $scope.recentLinks = result.data.links;
     });
     $scope.addLink = function(){
         $scope.linkUpload = true;
     };
     $scope.upload = function(){
         url = '/berlinevents/link';
-        var data = {
-            image : {
-                title: $scope.title,
-                url : $scope.url
-            }
-        };
+        console.log($scope.link.title);
+        var data = $scope.link;
         $http.post(url, data).then(function(result){
             $scope.success = true;
         });

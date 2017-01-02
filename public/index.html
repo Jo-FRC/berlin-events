@@ -24,14 +24,17 @@
                             </div>
 
                             <div id="link" ng-if="linkUpload">
-                                <input type="text" name="title" class="insert" placeholder="Title"></input><br>
-                                <input type="text" name="url" class="insert" placeholder="Url"></input><br>
+                                <input ng-model="link.title" type="text" name="title" class="insert" placeholder="Title"></input><br>
+                                <input ng-model="link.url" type="text" name="url" class="insert" placeholder="Url"></input><br>
                                 <button id="upload" ng-click="upload()" class="load-pic btn btn-info">Upload</button>
                             </div>
                             <br><br>
-                            <div class="links">
-                                {{recentLikns}}
+                            <div ng-repeat="link in recentLinks" class="links">
+                                <a href="{{link.link}}" target="_blank"> {{link.title}}</a>
+
                             </div>
+                            {{title}}
+                            {{linkUpload}}
 
                         </div>
                     </div>
