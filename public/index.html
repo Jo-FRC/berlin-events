@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv= "X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width = device-width, initiale-scale=1">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+        <meta charset="utf-8">
+        <title>Berlin Events</title>
+            <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.8/angular.min.js"></script>
+    </head>
+    <body ng-app="myApp">
+        <div class="container">
+            <div class="page-header">
+                <h1>Berlin Events</h1>
+            </div>
+
+            <div ng-controller="linkUpdate">
+                <div class="row">
+                    <div class="jumbotron">
+                        <div class="header">
+
+                            <div id="addLink">
+                                <a ng-click="addLink()">Add Link</a>
+                            </div>
+
+                            <div id="link" ng-if="linkUpload">
+                                <input type="text" name="title" class="insert" placeholder="Title"></input><br>
+                                <input type="text" name="url" class="insert" placeholder="Url"></input><br>
+                                <button id="upload" ng-click="upload()" class="load-pic btn btn-info">Upload</button>
+                            </div>
+                            <br><br>
+                            <div class="links">
+                                {{recentLikns}}
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        <script src="client.js"></script>
+    </body>
+</html>
