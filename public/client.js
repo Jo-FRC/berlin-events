@@ -1,6 +1,6 @@
 var myApp = angular.module('myApp', []);
 
-myApp.controller('linkUpdate', function($scope, $http) {
+myApp.controller('linksUpdate', function($scope, $http) {
     var url = '/berlinevents';
     delete $scope.success;
     delete $scope.linkUpload;
@@ -13,6 +13,8 @@ myApp.controller('linkUpdate', function($scope, $http) {
         $scope.recentLinks = result.data.links;
     });
     $scope.addLink = function(){
+        delete $scope.signup;
+        delete $scope.login;
         $scope.linkUpload = true;
     };
     $scope.upload = function(){
@@ -45,7 +47,7 @@ myApp.controller('linkUpdate', function($scope, $http) {
             $scope.success = true;
             $scope.recentLinks.unshift(result.data);
         });
-    
+
         delete $scope.linkUpload;
     };
 });
