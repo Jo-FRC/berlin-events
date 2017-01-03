@@ -11,7 +11,17 @@ var url = require('url');
 var https = require('https');
 var http = require('http');
 var path = require('path');
+var cookieParser = require('cookie-parser');
+var cookieSession = require('cookie-session');
+var checkPass = require('./checkPass');
+var hashPassword = checkPass.hashPassword;
+var checkPassword = checkPass.checkPassword;
 
+app.use(cookieSession({
+    secret: 'a really hard to guess secret',
+    maxAge: 1000 * 60 * 60 * 24 * 14
+}));
+app.use(cookieParser());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(express.static("./public"));
@@ -49,6 +59,62 @@ app.post('/berlinevents/link', function(req, res){
             success: false
         });
     });
+});
+
+function requireNotLoggedIn(req, res, next) {
+    if (req.session.user) {
+        res.redirect('/petition');
+    } else {
+        next();
+    }
+}
+
+app.post('/berlinevents/register', requireNotLoggedIn, function(req, res) {
+    req.body.username = req.body.username.capitalize();
+    if (req.body.username && req.body.email && req.body.password) {
+        hashPassword(req.body.password).then(function(hash){
+            return db.query("INSERT INTO users(username, email, password) VALUES ($1, $2, $3) RETURNING id",
+            [req.body.username, req.body.email, hash])
+            .then(function(result){
+                req.session.user = {
+                    email :req.body.email,
+                    name : req.body.username,
+                    id : result.rows[0].id
+                };
+
+                if (req.session.user) {
+                    res.redirect('/berlinevents');
+                }
+            });
+        }).catch(function(err){
+            console.log(err);
+        });
+    }
+});
+
+app.post('/berlinevents/login', requireNotLoggedIn, function(req, res) {
+    if (req.body.username && req.body.password){
+        db.query("SELECT users.first_name, users.last_name, users.id, petitioners.id as sign_id, password FROM users LEFT JOIN petitioners ON petitioners.user_id = users.id WHERE email = $1",
+        [req.body.username]).then(function(result){
+            checkPassword(req.body.password, result.rows[0].password).then(function(doesMatch){
+                if(doesMatch){
+                    console.log('match!');
+                    req.session.user = {
+                        username : result.rows[0].username,
+                        email : req.body.email,
+                        password : result.rows[0].password,
+                        id : result.rows[0].id,
+                    };
+                    console.log(req.session.user);
+                    res.redirect('/berlinevents');
+                } else {
+                    console.log('No match');
+                    res.render();
+                }
+            });
+
+        });
+    }
 });
 
 app.listen(8080, function(){
