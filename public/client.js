@@ -19,20 +19,33 @@ myApp.controller('linkUpdate', function($scope, $http) {
         url = '/berlinevents/link';
         var title = $scope.link.title;
         var link = $scope.link.url;
-        console.log(title);
         if (link.substring(0, 4) !== 'http') {
-            console.log(link.substring(0, 4));
             link = 'http://' + link;
         }
+        var recent =  $scope.recentLinks;
+        console.log(recent);
+        var matching = recent.some(function(linkToCompare){
+            console.log(link);
+            console.log(linkToCompare.link);
+            return linkToCompare.link == link;
+        });
+
+        if (matching) {
+            alert('This link already exists');
+            delete $scope.linkUpload;
+            return;
+        }
+
         var data = {
             title : title,
             url : link
         };
 
-        console.log(data);
         $http.post(url, data).then(function(result){
             $scope.success = true;
             $scope.recentLinks.unshift(result.data);
         });
+    
+        delete $scope.linkUpload;
     };
 });
