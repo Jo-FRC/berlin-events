@@ -1,0 +1,9 @@
+<form method="post" action='/berlinevents/signup'>
+<div id="signupsection">
+    <input ng-model="username" type="text" name="username" class="insert" placeholder="Username" required></input><br>
+    <input ng-model="email" type="text" name="email" class="insert" placeholder="Email" required></input><br>
+    <input ng-model="password" type="password" name="password" class="insert" placeholder="Password" required></input><br>
+    <button ng-click="submitSignUp(); username=null; email=null; password=null" id="signupbutton" class="btn btn-info">Signup</button>
+</div>
+</form>
+<br><br>

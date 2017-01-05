@@ -14,57 +14,32 @@
             <h1>Berlin Events</h1>
         </div>
 
-        <div ng-controller="linksUpdate">
+        <!-- <div ng-controller="linksUpdate"> -->
             <div class="row">
                 <div class="jumbotron">
                     <div class="header">
-
-                        <div id="addLink" class="menubar">
-                            <a ng-click="addLink()">Add Link</a>
-                        </div>
-                        <div ng-controller="loginPhase">
-                            <div id="login" class="menubar">
-                                <a ng-click="viewLogin()">Login</a>
-                            </div>
-                            <div id="signup" class="menubar">
-                                <a ng-click="viewSignUp()">Signup</a>
-                            </div>
+                        <header ng-include="'./nav.html'"></header>
+                    <div ui-view></div>
 
 
 
-                            <div id="loginsection" ng-if="login">
-                                <input ng-model="" type="text" name="username" class="insert" placeholder="Username" required></input><br>
-                                <input ng-model="" type="password" name="password" class="insert" placeholder="Password" required></input><br>
-                                <button ng-click="submitLogin(); link.title=null; link.url=null" id="loginbutton" class="btn btn-info">Login</button>
-                            </div>
-                            <br><br>
 
-                            <div id="signupsection" ng-if="signup">
-                                <input ng-model="" type="text" name="username" class="insert" placeholder="Username" required></input><br>
-                                <input ng-model="" type="text" name="email" class="insert" placeholder="Email" required></input><br>
-                                <input ng-model="" type="password" name="password" class="insert" placeholder="Password" required></input><br>
-                                <button ng-click="submitSignUp(); link.title=null; link.url=null" id="signupbutton" class="btn btn-info">Signup</button>
-                            </div>
-                            <br><br>
-                        </div>
-                        <div id="link" ng-if="linkUpload">
-                            <input ng-model="link.title" type="text" name="title" class="insert" placeholder="Title" required></input><br>
-                            <input ng-model="link.url" type="text" name="url" class="insert" placeholder="Url" required></input><br>
-                            <button ng-click="upload(); link.title=null; link.url=null" id="upload" class="load-pic btn btn-info">Upload</button>
-                        </div>
-                        <br><br>
-                        <div ng-repeat="link in recentLinks" class="links">
-                            <a href="{{link.link}}" target="_blank"> {{link.title}}</a>
 
-                        </div>
+
+
+
+
+
+
+
 
                     </div>
-                </div>
+                <!-- </div> -->
             </div>
         </div>
 
     </div>
+    <script src="//unpkg.com/angular-ui-router/release/angular-ui-router.min.js"></script>
     <script src="client.js"></script>
-    <script src="login.js"></script>
 </body>
 </html>

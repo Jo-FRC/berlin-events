@@ -28,8 +28,6 @@ app.use(express.static("./public"));
 
 app.get('/berlinevents', function(req, res){
     db.query('SELECT * FROM links ORDER by created_at DESC').then(function(results) {
-        console.log("getLink");
-        console.log(results.rows);
         res.json(
             {
                 links: results.rows
@@ -63,59 +61,59 @@ app.post('/berlinevents/link', function(req, res){
 
 function requireNotLoggedIn(req, res, next) {
     if (req.session.user) {
-        res.redirect('/petition');
+        res.redirect('/berlinevents');
     } else {
-        next();
+        return;
     }
 }
 
-app.post('/berlinevents/register', requireNotLoggedIn, function(req, res) {
-    req.body.username = req.body.username.capitalize();
+app.post('/berlinevents/signup', function(req, res) {
     if (req.body.username && req.body.email && req.body.password) {
-        hashPassword(req.body.password).then(function(hash){
-            return db.query("INSERT INTO users(username, email, password) VALUES ($1, $2, $3) RETURNING id",
-            [req.body.username, req.body.email, hash])
+        hashPassword(req.body.password)
+            .then(function(hash){
+                return db.query("INSERT INTO users(username, email, password) VALUES ($1, $2, $3) RETURNING id",
+                [req.body.username, req.body.email, hash])
             .then(function(result){
                 req.session.user = {
                     email :req.body.email,
-                    name : req.body.username,
+                    username : req.body.username,
                     id : result.rows[0].id
                 };
-
-                if (req.session.user) {
-                    res.redirect('/berlinevents');
-                }
+                res.json({
+                    'username' : req.session.username
+                });
             });
-        }).catch(function(err){
-            console.log(err);
-        });
+            }).catch(function(err){
+                console.log(err);
+            });
     }
 });
 
-app.post('/berlinevents/login', requireNotLoggedIn, function(req, res) {
-    if (req.body.username && req.body.password){
-        db.query("SELECT users.first_name, users.last_name, users.id, petitioners.id as sign_id, password FROM users LEFT JOIN petitioners ON petitioners.user_id = users.id WHERE email = $1",
-        [req.body.username]).then(function(result){
-            checkPassword(req.body.password, result.rows[0].password).then(function(doesMatch){
-                if(doesMatch){
-                    console.log('match!');
-                    req.session.user = {
-                        username : result.rows[0].username,
-                        email : req.body.email,
-                        password : result.rows[0].password,
-                        id : result.rows[0].id,
-                    };
-                    console.log(req.session.user);
-                    res.redirect('/berlinevents');
-                } else {
-                    console.log('No match');
-                    res.render();
-                }
-            });
+// app.post('/berlinevents/login', requireNotLoggedIn, function(req, res) {
+//     if (req.body.username && req.body.password){
+//         db.query("SELECT users.username, users.id, password FROM users WHERE username = $1",
+//         [req.body.username]).then(function(result){
+//             checkPassword(req.body.password, result.rows[0].password).then(function(doesMatch){
+//                 if(doesMatch){
+//                     console.log('match!');
+//                     req.session.user = {
+//                         username : result.rows[0].username,
+//                         email : req.body.email,
+//                         password : result.rows[0].password,
+//                         id : result.rows[0].id,
+//                     };
+//                     console.log(req.session.user);
+//                     res.redirect('/berlinevents');
+//                 } else {
+//                     console.log('No match');
+//                     res.render();
+//                 }
+//             });
+//
+//         });
+//     }
+// });
 
-        });
-    }
-});
 
 app.listen(8080, function(){
     console.log("I'm listening on 8080");
