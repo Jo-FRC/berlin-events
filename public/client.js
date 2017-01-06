@@ -11,9 +11,7 @@ var myApp = angular.module('myApp', [
         templateUrl: '/home.html',
         controller: function($scope, $http){
             var url = '/berlinevents';
-            delete $scope.success;
-            delete $scope.linkUpload;
-            delete $scope.recentLinks;
+            
             $scope.recentLinks = [];
             $http.get(url).then(function(result){
                 console.log(result.data.links);
@@ -25,69 +23,135 @@ var myApp = angular.module('myApp', [
     .state('login', {
         url : '/login',
         templateUrl: '/login.html',
-        controller: function($scope, $http){
-            delete $scope.linkUpload;
-            delete $scope.signup;
-            delete $scope.login;
-            $scope.login = true;
-            console.log($scope.username);
+        controller: function($scope, $http, $state){
+            if ($scope.loggedIn || $scope.signedUp){
+                return;
+            } else {
+                delete $scope.linkUpload;
+                delete $scope.signup;
+                delete $scope.login;
+                $scope.login = true;
+                console.log($scope.username);
 
-            $scope.submitSignUp = function(){
-                var url = '/berlinevents/login';
-                var username = $scope.username;
-                var password = $scope.password;
+                $scope.submitLogin = function(){
+                    console.log(88888);
+                    var url = 'berlinevents/login';
+                    var username = $scope.username;
+                    var password = $scope.password;
+                    var data = {
+                        username : username,
+                        password : password
+                    };
 
+                    var jsonData = JSON.stringify(data);
+                    console.log(jsonData);
 
-                var data = {
-                    username : username,
-                    password : password
+                    $http.post(url, jsonData).then(function(result){
+                        console.log(333);
+                        $scope.loggedIn = true;
+                        console.log(result);
+                        $state.go('home');
+                    })
+                    .catch(function(err){
+                        console.log(err);
+                        $scope.notvaliduser = true;
+                    });
                 };
-
-
-                $http.get(url, data).then(function(result){
-                    $scope.loggedIn = true;
-                    console.log(result);
-                });
-            };
+            }
         }
     })
     .state('signup', {
         url : '/signup',
         templateUrl: '/signup.html',
         controller: function($scope, $http, $state){
-            delete $scope.linkUpload;
-            delete $scope.login;
-            delete $scope.signup;
-            $scope.signup = true;
+            if ($scope.loggedIn){
+                $state.go('home');
+            } else {
+                delete $scope.linkUpload;
+                delete $scope.login;
+                delete $scope.signup;
+                $scope.signup = true;
 
-            $scope.submitSignUp = function(){
-                var url = 'berlinevents/signup';
-                var username = $scope.username;
-                var email = $scope.email;
-                var password = $scope.password;
+                $scope.submitSignUp = function(){
+                    var url = 'berlinevents/signup';
+                    var username = $scope.username;
+                    var email = $scope.email;
+                    var password = $scope.password;
 
-                var data = {
-                    username : username,
-                    email : email,
-                    password : password
+                    var data = {
+                        username : username,
+                        email : email,
+                        password : password
+                    };
+
+                    var jsonData = JSON.stringify(data);
+                    $http.post(url, jsonData)
+                    .then(function(result){
+                        $scope.loggedIn = true;
+                        $state.go('home');
+                    })
+                    .catch(function(err){
+                        console.log(err);
+                    });
                 };
+            }
+        }
+    })
+    /*
+    .state('login', {
+        url : '/login',
+        templateUrl: '/login.html',
+        controller: function($scope, $http, $state){
+            if ($scope.loggedIn){
+                $state.go('home');
+            } else {
+                delete $scope.linkUpload;
+                delete $scope.signup;
+                delete $scope.login;
+                $scope.login = true;
+                console.log($scope.username);
 
-                var jsonData = JSON.stringify(data);
-                $http.post(url, jsonData)
-                .then(function(result){
-                    $scope.signedUp = true;
-                    $state.go('home');
-                })
-                .catch(function(err){
-                    console.log(err);
-                });
-            };
+                $scope.submitLogin = function(){
+                    console.log(88888);
+                    var url = 'berlinevents/login';
+                    var username = $scope.username;
+                    var password = $scope.password;
+                    var data = {
+                        username : username,
+                        password : password
+                    };
+
+                    var jsonData = JSON.stringify(data);
+                    console.log(jsonData);
+
+                    $http.post(url, jsonData).then(function(result){
+                        console.log(333);
+                        $scope.loggedIn = true;
+                        console.log(result);
+                        $state.go('home');
+                    })
+                    .catch(function(err){
+                        console.log(err);
+                        $scope.notvaliduser = true;
+                    });
+                };
+            }
+        }
+    })
+    */
+    .state('logout', {
+        url : '/logout',
+        controller: function($scope, $http, $state){
+            delete $scope.signedUp;
+            delete $scope.loggedIn;
+            delete $scope.linkUpload;
+            $state.go('home');
         }
     })
     .state('addlink', {
         url : '/addlink',
         templateUrl: '/addlink.html',
-        controller: function($scope, $http){
+        controller: function($scope, $http, $state){
             delete $scope.signup;
             delete $scope.login;
             delete $scope.linkUpload;
@@ -131,6 +195,7 @@ var myApp = angular.module('myApp', [
                 $http.post(url, data).then(function(result){
                     $scope.success = true;
                     $scope.recentLinks.unshift(result.data);
+                    $state.go('home');
                 });
 
                 delete $scope.linkUpload;

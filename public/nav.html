@@ -13,7 +13,8 @@
 
     <ul class="nav nav-pills pull-right">
         <li class="active"><a href="#/berlinevents">Home</a></li>
-        <li class="active"><a ui-sref="addlink">Add Link</a></li>
-        <li class="active"><a ui-sref="login">Login</a></li>
-        <li class="active"><a ui-sref="signup">Signup</a></li>
+        <li class=""><a ui-sref="addlink">Add Link</a></li>
+        <li ng-if="!loggedIn" class=""><a ui-sref="login">Login</a></li>
+        <li ng-if="!loggedIn" class=""><a ui-sref="signup">Signup</a></li>
+        <li ng-if="loggedIn" class=""><a ui-sref="logout">Logout</a></li>
     </ul>

@@ -42,6 +42,7 @@ app.get('/berlinevents', function(req, res){
 });
 
 app.post('/berlinevents/link', function(req, res){
+    console.log(req.body);
     db.query("INSERT INTO links(link, title) VALUES ($1, $2) RETURNING id",
     [req.body.url, req.body.title])
     .then (function(result) {
@@ -68,6 +69,7 @@ function requireNotLoggedIn(req, res, next) {
 }
 
 app.post('/berlinevents/signup', function(req, res) {
+    console.log(req.body);
     if (req.body.username && req.body.email && req.body.password) {
         hashPassword(req.body.password)
             .then(function(hash){
@@ -80,8 +82,10 @@ app.post('/berlinevents/signup', function(req, res) {
                     id : result.rows[0].id
                 };
                 res.json({
-                    'username' : req.session.username
+                    'username' : req.session.user.username,
+                    'email' :  req.session.user.email
                 });
+                console.log(req.session.user.username);
             });
             }).catch(function(err){
                 console.log(err);
@@ -89,30 +93,39 @@ app.post('/berlinevents/signup', function(req, res) {
     }
 });
 
-// app.post('/berlinevents/login', requireNotLoggedIn, function(req, res) {
-//     if (req.body.username && req.body.password){
-//         db.query("SELECT users.username, users.id, password FROM users WHERE username = $1",
-//         [req.body.username]).then(function(result){
-//             checkPassword(req.body.password, result.rows[0].password).then(function(doesMatch){
-//                 if(doesMatch){
-//                     console.log('match!');
-//                     req.session.user = {
-//                         username : result.rows[0].username,
-//                         email : req.body.email,
-//                         password : result.rows[0].password,
-//                         id : result.rows[0].id,
-//                     };
-//                     console.log(req.session.user);
-//                     res.redirect('/berlinevents');
-//                 } else {
-//                     console.log('No match');
-//                     res.render();
-//                 }
-//             });
-//
-//         });
-//     }
-// });
+app.post('/berlinevents/login', function(req, res) {
+    // console.log(req.body);
+    if (req.body.username && req.body.password){
+        db.query("SELECT users.username, users.id, password FROM users WHERE username = $1",
+        [req.body.username]).then(function(result){
+            console.log(result.rows);
+            checkPassword(req.body.password, result.rows[0].password).then(function(doesMatch){
+                if(doesMatch){
+                    console.log('match!');
+                    req.session.user = {
+                        username : result.rows[0].username,
+                        email : req.body.email,
+                        password : result.rows[0].password,
+                        id : result.rows[0].id,
+                    };
+                    console.log(req.session.user);
+                    console.log('match!');
+
+                    res.json({
+                        'username' : req.session.user.username
+                    });
+                } else {
+                    console.log('No match');
+                }
+            }).catch(function(err){
+                console.log(err);
+            });
+
+        }).catch(function(err){
+            console.log(err);
+        });
+    }
+});
 
 
 app.listen(8080, function(){
