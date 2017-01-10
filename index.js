@@ -8,8 +8,6 @@ var bodyParser = require('body-parser');
 var basicAuth = require('basic-auth');
 var fs = require('fs');
 var url = require('url');
-var https = require('https');
-var http = require('http');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var cookieSession = require('cookie-session');
@@ -106,12 +104,10 @@ app.post('/berlinevents/login', function(req, res) {
                         username : result.rows[0].username,
                         email : req.body.email,
                         password : result.rows[0].password,
-                        id : result.rows[0].id,
+                        id : result.rows[0].id
                     };
-                    console.log(req.session.user);
-                    console.log('match!');
-
-                    res.json({
+                    // res.end();
+                    res.send({
                         'username' : req.session.user.username
                     });
                 } else {

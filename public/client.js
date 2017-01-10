@@ -1,21 +1,53 @@
-var myApp = angular.module('myApp', [
-    'ui.router'
-])
+var myApp = angular.module('myApp', ['ui.router', 'ngCookies'])
+
+.service('LoggedInServ', function($http, $state, $cookies){
+    var loggedIn = $cookies.get('isLoggedIn');
+    this.submitLogin = function(username, password){
+        var url = 'berlinevents/login';
+        var userData = { username, password };
+        var jsonData = JSON.stringify(userData);
+        return $http.post(url, jsonData)
+        .then(function(result){
+            // console.log(loggedIn);
+            // console.log(result.data);
+            console.log('this is successful');
+            $cookies.put('isLoggedIn', true);
+            loggedIn = true;
+            // $state.go('home');
+        })
+        .catch(function(err){
+            console.log(err);
+        });
+    };
+    this.checkIfLoggedIn = function(){
+        return loggedIn;
+
+    };
+    this.logout = function(){
+        loggedIn = false;
+        $cookies.remove('isLoggedIn');
+
+
+    }
+})
 
 .config(['$urlRouterProvider', '$stateProvider', function($urlRouterProvider, $stateProvider){
     $urlRouterProvider.otherwise('/berlinevents');
-
     $stateProvider
     .state('home', {
         url : '/berlinevents',
         templateUrl: '/home.html',
-        controller: function($scope, $http){
+        controller: function($scope, $http, LoggedInServ, $cookies){
             var url = '/berlinevents';
-            
+            // var isLoggedIn = LoggedInServ.checkIfLoggedIn();
+            console.log('is five');
+            $scope.isLoggedIn = LoggedInServ.checkIfLoggedIn();
+            console.log(LoggedInServ.checkIfLoggedIn());
+            $scope.test = 'shirin is al';
             $scope.recentLinks = [];
-            $http.get(url).then(function(result){
-                console.log(result.data.links);
 
+            $http.get(url).then(function(result){
+                // console.log(result.data.links);
                 $scope.recentLinks = result.data.links;
             });
         }
@@ -23,41 +55,42 @@ var myApp = angular.module('myApp', [
     .state('login', {
         url : '/login',
         templateUrl: '/login.html',
-        controller: function($scope, $http, $state){
-            if ($scope.loggedIn || $scope.signedUp){
-                return;
-            } else {
-                delete $scope.linkUpload;
-                delete $scope.signup;
-                delete $scope.login;
-                $scope.login = true;
-                console.log($scope.username);
-
-                $scope.submitLogin = function(){
-                    console.log(88888);
-                    var url = 'berlinevents/login';
-                    var username = $scope.username;
-                    var password = $scope.password;
-                    var data = {
-                        username : username,
-                        password : password
-                    };
-
-                    var jsonData = JSON.stringify(data);
-                    console.log(jsonData);
-
-                    $http.post(url, jsonData).then(function(result){
-                        console.log(333);
-                        $scope.loggedIn = true;
-                        console.log(result);
-                        $state.go('home');
-                    })
-                    .catch(function(err){
-                        console.log(err);
-                        $scope.notvaliduser = true;
+        controller: function($scope, $http, $state, LoggedInServ, $cookies){
+            $scope.submitLogin = function(){
+                LoggedInServ.submitLogin($scope.username, $scope.password)
+                .then(function(){
+                    $scope.loggedIn = true;
+                    console.log($scope.loggedIn);
+                    $state.go('home',{
+                        isLoggedIn: true
                     });
-                };
-            }
+                });
+            };
+                // $scope.submitLogin = function(){
+                //     console.log(88888);
+                //     var url = 'berlinevents/login';
+                //     var username = $scope.username;
+                //     var password = $scope.password;
+                //     var data = {
+                //         username : username,
+                //         password : password
+                //     };
+                //
+                //     var jsonData = JSON.stringify(data);
+                //     console.log(jsonData);
+                //
+                //     $http.post(url, jsonData).then(function(result){
+                //         console.log(333);
+                //         $scope.loggedIn = true;
+                //         console.log(result);
+                //         $state.go('home');
+                //     })
+                //     .catch(function(err){
+                //         console.log(err);
+                //         $scope.notvaliduser = true;
+                //     });
+                // };
+            // }
         }
     })
     .state('signup', {
@@ -141,7 +174,8 @@ var myApp = angular.module('myApp', [
     */
     .state('logout', {
         url : '/logout',
-        controller: function($scope, $http, $state){
+        controller: function($scope, $http, $state, LoggedInServ, $cookies){
+            LoggedInServ.logout();
             delete $scope.signedUp;
             delete $scope.loggedIn;
             delete $scope.linkUpload;

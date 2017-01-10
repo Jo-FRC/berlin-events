@@ -1,3 +1,11 @@
+<ul class="nav nav-pills pull-right">
+    <li class="active"><a href="#/berlinevents">Home</a></li>
+    <li class=""><a ui-sref="addlink">Add Link</a></li>
+    <li ng-if="!isLoggedIn" class=""><a ui-sref="login">Login</a></li>
+    <li ng-if="!isLoggedIn" class=""><a ui-sref="signup">Signup</a></li>
+    <li ng-if="isLoggedIn" class=""><a ui-sref="logout">Logout</a></li>
+</ul>
+{{isLoggedIn}}
 <div ng-repeat="link in recentLinks" class="links">
     <a href="{{link.link}}" target="_blank"> {{link.title}}</a>
 
