@@ -1,0 +1,10 @@
+<div id="addComment" >
+    <p>{{username}}</p><br>
+    <input ng-model="comment.text" type="text" name="comment" class="insert" placeholder="Comment" required><br>
+    <button ng-click="addComment(); link.title=null; link.url=null" id="upload" class="load-pic btn btn-info" >Add</button>
+</div>
+<br><br>
+
+<div id='comments' ng-repeat="comment in recentComments">
+<p> {{comment.username}}: {{comment.comment_text}} </p>
+</div>

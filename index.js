@@ -25,7 +25,16 @@ app.use(bodyParser.urlencoded({extended: false}));
 app.use(express.static("./public"));
 
 app.get('/berlinevents', function(req, res){
-    db.query('SELECT * FROM links ORDER by created_at DESC').then(function(results) {
+    db.query('SELECT * FROM links LEFT JOIN comments on comments.link_id = links.id ORDER by created_at DESC').then(function(results) {
+        // tempLinks = {
+        //
+        // };
+        // if (tempLinks[link.id]) {
+        //     tempLinks[link.id].numberOfComments++
+        // } else {
+        //
+        // }
+        // for (var i )
         res.json(
             {
                 links: results.rows
@@ -91,6 +100,10 @@ app.post('/berlinevents/signup', function(req, res) {
     }
 });
 
+app.get('/getUserinfo', function(req, res){
+    res.json(req.session.user);
+});
+
 app.post('/berlinevents/login', function(req, res) {
     // console.log(req.body);
     if (req.body.username && req.body.password){
@@ -110,6 +123,7 @@ app.post('/berlinevents/login', function(req, res) {
                     res.send({
                         'username' : req.session.user.username
                     });
+                    console.log(req.session.user.username);
                 } else {
                     console.log('No match');
                 }
@@ -123,6 +137,50 @@ app.post('/berlinevents/login', function(req, res) {
     }
 });
 
+
+
+//get the page with comments
+app.get('/link/:id', function(req, res) {
+    console.log('/link/' + req.params.id + ' - ' + req.body);
+    db.query('SELECT * FROM links WHERE id =$1 ', [req.params.id])
+    .then(function(result) {
+        return db.query('SELECT * FROM  comments WHERE link_id = $1 ORDER by created_at DESC',[req.params.id])
+        .then(function (result2){
+            console.log("link/id");
+            console.log(result2.rows);
+            res.json({
+                link : result.rows[0],
+                comments : result2.rows,
+                allComments: result2.rows.length
+            });
+            console.log(result2);
+        }).catch(function(err) {
+            console.log(err);
+            res.sendStatus(500);
+        });
+    });
+});
+
+//function for comment
+function handleComment(req, res) {
+    console.log( req.body);
+    db.query("INSERT INTO comments(username, comment_text, link_id) VALUES ($1, $2, $3) RETURNING id",
+    [req.session.user.username , req.body.text, req.params.id])
+    .then(function(result) {
+        res.json({
+            username : req.session.user.username,
+            comment_text : req.body.text,
+            id : result.rows[0].id
+        });
+    }).catch(function(err) {
+        console.log(err);
+        res.sendStatus(500);
+    });
+}
+//change roter to /image/:id/comment
+app.post('/link/:id', handleComment);
+//change roter to /image/:id/comment
+app.put('/link/:id', handleComment);
 
 app.listen(8080, function(){
     console.log("I'm listening on 8080");

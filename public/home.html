@@ -1,4 +1,6 @@
 <ul class="nav nav-pills pull-right">
+    <p ng-if="isLoggedIn">Hi {{username}}</p>
+
     <li class="active"><a href="#/berlinevents">Home</a></li>
     <li class=""><a ui-sref="addlink">Add Link</a></li>
     <li ng-if="!isLoggedIn" class=""><a ui-sref="login">Login</a></li>
@@ -7,5 +9,6 @@
 </ul>
 <div ng-repeat="link in recentLinks" class="links">
     <a href="{{link.link}}" target="_blank"> {{link.title}}</a>
+    <a href="#/comment/{{link.id}}"> {{}}numero commenti</a>
 
 </div>

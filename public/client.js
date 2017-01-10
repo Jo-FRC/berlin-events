@@ -1,6 +1,7 @@
 var myApp = angular.module('myApp', ['ui.router', 'ngCookies'])
 
 .service('LoggedInServ', function($http, $state, $cookies){
+    var LoggedInService = this;
     var loggedIn = $cookies.get('isLoggedIn');
     this.submitLogin = function(username, password){
         var url = 'berlinevents/login';
@@ -8,11 +9,15 @@ var myApp = angular.module('myApp', ['ui.router', 'ngCookies'])
         var jsonData = JSON.stringify(userData);
         return $http.post(url, jsonData)
         .then(function(result){
+            LoggedInService.username = result.data.username;
+            console.log(LoggedInService);
+            console.log(result.data.username);
             // console.log(loggedIn);
             // console.log(result.data);
             console.log('this is successful');
             $cookies.put('isLoggedIn', true);
             loggedIn = true;
+            $cookies.put('username', LoggedInService.username);
             // $state.go('home');
         })
         .catch(function(err){
@@ -26,13 +31,26 @@ var myApp = angular.module('myApp', ['ui.router', 'ngCookies'])
     this.logout = function(){
         loggedIn = false;
         $cookies.remove('isLoggedIn');
-
-
-    }
+        delete LoggedInService.username;
+    };
     this.registerUser = function(){
         loggedIn = true;
         $cookies.put('isLoggedIn', true);
-    }
+    };
+    this.getUsername = function(){
+        return new Promise(function(resolve, reject){
+            if (LoggedInService.username) {
+                resolve(LoggedInService.username);
+            } else {
+                $http.get('/getUserinfo').then(function(result){
+                    LoggedInService.username = result.data.username;
+                    resolve(result.data.username);
+                });
+            }
+
+        })
+
+    };
 })
 
 .config(['$urlRouterProvider', '$stateProvider', function($urlRouterProvider, $stateProvider){
@@ -44,56 +62,62 @@ var myApp = angular.module('myApp', ['ui.router', 'ngCookies'])
         controller: function($scope, $http, LoggedInServ, $cookies){
             var url = '/berlinevents';
             // var isLoggedIn = LoggedInServ.checkIfLoggedIn();
-            console.log('is five');
             $scope.isLoggedIn = LoggedInServ.checkIfLoggedIn();
             console.log(LoggedInServ.checkIfLoggedIn());
-            $scope.test = 'shirin is al';
             $scope.recentLinks = [];
+            if ($scope.isLoggedIn) {
+                LoggedInServ.getUsername().then(function(name){
+                    $scope.username = name;
+                });
+            }
 
             $http.get(url).then(function(result){
                 // console.log(result.data.links);
                 $scope.recentLinks = result.data.links;
+                console.log($scope.recentLinks);
             });
         }
     })
     .state('login', {
-        url : '/login',
+        url : '/login?next',
         templateUrl: '/login.html',
-        controller: function($scope, $http, $state, LoggedInServ, $cookies){
+        controller: function($scope, $http, $state, LoggedInServ, $cookies, $stateParams){
+            console.log($stateParams);
             $scope.submitLogin = function(){
                 LoggedInServ.submitLogin($scope.username, $scope.password)
                 .then(function(){
                     $scope.loggedIn = true;
                     console.log($scope.loggedIn);
-                    $state.go('home',{
+                    $state.go($stateParams.next || 'home',{
                         isLoggedIn: true
                     });
+
                 });
             };
-                // $scope.submitLogin = function(){
-                //     console.log(88888);
-                //     var url = 'berlinevents/login';
-                //     var username = $scope.username;
-                //     var password = $scope.password;
-                //     var data = {
-                //         username : username,
-                //         password : password
-                //     };
-                //
-                //     var jsonData = JSON.stringify(data);
-                //     console.log(jsonData);
-                //
-                //     $http.post(url, jsonData).then(function(result){
-                //         console.log(333);
-                //         $scope.loggedIn = true;
-                //         console.log(result);
-                //         $state.go('home');
-                //     })
-                //     .catch(function(err){
-                //         console.log(err);
-                //         $scope.notvaliduser = true;
-                //     });
-                // };
+            // $scope.submitLogin = function(){
+            //     console.log(88888);
+            //     var url = 'berlinevents/login';
+            //     var username = $scope.username;
+            //     var password = $scope.password;
+            //     var data = {
+            //         username : username,
+            //         password : password
+            //     };
+            //
+            //     var jsonData = JSON.stringify(data);
+            //     console.log(jsonData);
+            //
+            //     $http.post(url, jsonData).then(function(result){
+            //         console.log(333);
+            //         $scope.loggedIn = true;
+            //         console.log(result);
+            //         $state.go('home');
+            //     })
+            //     .catch(function(err){
+            //         console.log(err);
+            //         $scope.notvaliduser = true;
+            //     });
+            // };
             // }
         }
     })
@@ -119,6 +143,7 @@ var myApp = angular.module('myApp', ['ui.router', 'ngCookies'])
                     $state.go('home',{
                         isLoggedIn: true
                     });
+                    console.log(jsonData);
                 })
                 .catch(function(err){
                     console.log(err);
@@ -127,66 +152,22 @@ var myApp = angular.module('myApp', ['ui.router', 'ngCookies'])
         }
 
     })
-    /*
-    .state('login', {
-        url : '/login',
-        templateUrl: '/login.html',
-        controller: function($scope, $http, $state){
-            if ($scope.loggedIn){
-                $state.go('home');
-            } else {
-                delete $scope.linkUpload;
-                delete $scope.signup;
-                delete $scope.login;
-                $scope.login = true;
-                console.log($scope.username);
-
-                $scope.submitLogin = function(){
-                    console.log(88888);
-                    var url = 'berlinevents/login';
-                    var username = $scope.username;
-                    var password = $scope.password;
-                    var data = {
-                        username : username,
-                        password : password
-                    };
-
-                    var jsonData = JSON.stringify(data);
-                    console.log(jsonData);
-
-                    $http.post(url, jsonData).then(function(result){
-                        console.log(333);
-                        $scope.loggedIn = true;
-                        console.log(result);
-                        $state.go('home');
-                    })
-                    .catch(function(err){
-                        console.log(err);
-                        $scope.notvaliduser = true;
-                    });
-                };
-            }
-        }
-    })
-    */
-    .state('logout', {
-        url : '/logout',
-        controller: function($scope, $http, $state, LoggedInServ, $cookies){
-            LoggedInServ.logout();
-            delete $scope.signedUp;
-            delete $scope.loggedIn;
-            delete $scope.linkUpload;
-            $state.go('home');
-        }
-    })
-    .state('addlink', {
-        url : '/addlink',
-        templateUrl: '/addlink.html',
-        controller: function($scope, $http, $state){
-            delete $scope.signup;
-            delete $scope.login;
-            delete $scope.linkUpload;
-            $scope.linkUpload = true;
+.state('logout', {
+    url : '/logout',
+    controller: function($scope, $http, $state, LoggedInServ, $cookies){
+        LoggedInServ.logout();
+        delete $scope.signedUp;
+        delete $scope.loggedIn;
+        delete $scope.linkUpload;
+        $state.go('home');
+    }
+})
+.state('addlink', {
+    url : '/addlink',
+    templateUrl: '/addlink.html',
+    controller: function($scope, $http, $state, LoggedInServ, $cookies){
+        $scope.isLoggedIn = LoggedInServ.checkIfLoggedIn();
+        if ($scope.isLoggedIn) {
             $scope.recentLinks = [];
             $scope.link = {};
             var url = '/berlinevents';
@@ -229,62 +210,48 @@ var myApp = angular.module('myApp', ['ui.router', 'ngCookies'])
                     $state.go('home');
                 });
 
-                delete $scope.linkUpload;
             };
-        }
-    });
-}]);
 
-// myApp.controller('linksUpdate', function($scope, $http) {
-//     var url = '/berlinevents';
-//     delete $scope.success;
-//     delete $scope.linkUpload;
-//     delete $scope.recentLinks;
-//     $scope.recentLinks = [];
-//     $scope.link = {};
-//     $http.get(url).then(function(result){
-//         console.log(result.data.links);
-//
-//         $scope.recentLinks = result.data.links;
-//     });
-//     $scope.addLink = function(){
-//         delete $scope.signup;
-//         delete $scope.login;
-//         delete $scope.linkUpload;
-//         $scope.linkUpload = true;
-//
-//     };
-//     $scope.upload = function(){
-//         url = '/berlinevents/link';
-//         var title = $scope.link.title;
-//         var link = $scope.link.url;
-//         if (link.substring(0, 4) !== 'http') {
-//             link = 'http://' + link;
-//         }
-//         var recent =  $scope.recentLinks;
-//         console.log(recent);
-//         var matching = recent.some(function(linkToCompare){
-//             console.log(link);
-//             console.log(linkToCompare.link);
-//             return linkToCompare.link == link;
-//         });
-//
-//         if (matching) {
-//             alert('This link already exists');
-//             delete $scope.linkUpload;
-//             return;
-//         }
-//
-//         var data = {
-//             title : title,
-//             url : link
-//         };
-//
-//         $http.post(url, data).then(function(result){
-//             $scope.success = true;
-//             $scope.recentLinks.unshift(result.data);
-//         });
-//
-//         delete $scope.linkUpload;
-//     };
-// });
+        } else {
+            $state.go('login', {
+                next: 'addlink'
+            });
+        }
+    }
+})
+.state('comments', {
+    url : '/comment/:id',
+    templateUrl: '/comments.html',
+    controller: function($scope, $http, $state, LoggedInServ, $cookies, $stateParams){
+        console.log($stateParams);
+        $scope.isLoggedIn = LoggedInServ.checkIfLoggedIn();
+        if ($scope.isLoggedIn) {
+            LoggedInServ.getUsername().then(function(name){
+                $scope.username = name;
+            });
+            $scope.recentComments = [];
+            $scope.comment = {};
+            var url = '/link/' + $stateParams.id;
+            console.log(allComments);
+            $http.get(url).then(function(result){
+                $scope.allComments = result.data.allComments;
+                console.log(result.data.comments);
+                $scope.recentComments = result.data.comments;
+            });
+            $scope.addComment = function(){
+                var url = '/link/' + $stateParams.id;
+                var comment = $scope.comment;
+                console.log(comment);
+                $http.post(url, comment).then(function(result){
+                    console.log(result);
+                    $scope.recentComments.unshift(result.data);
+                });
+            };
+        } else {
+            $state.go('login', {
+                next: 'comments'
+            });
+        }
+    }
+});
+}]);
