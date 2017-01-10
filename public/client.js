@@ -29,6 +29,10 @@ var myApp = angular.module('myApp', ['ui.router', 'ngCookies'])
 
 
     }
+    this.registerUser = function(){
+        loggedIn = true;
+        $cookies.put('isLoggedIn', true);
+    }
 })
 
 .config(['$urlRouterProvider', '$stateProvider', function($urlRouterProvider, $stateProvider){
@@ -96,39 +100,32 @@ var myApp = angular.module('myApp', ['ui.router', 'ngCookies'])
     .state('signup', {
         url : '/signup',
         templateUrl: '/signup.html',
-        controller: function($scope, $http, $state){
-            if ($scope.loggedIn){
-                $state.go('home');
-            } else {
-                delete $scope.linkUpload;
-                delete $scope.login;
-                delete $scope.signup;
-                $scope.signup = true;
+        controller: function($scope, $http, $state, LoggedInServ, $cookies){
 
-                $scope.submitSignUp = function(){
-                    var url = 'berlinevents/signup';
-                    var username = $scope.username;
-                    var email = $scope.email;
-                    var password = $scope.password;
-
-                    var data = {
-                        username : username,
-                        email : email,
-                        password : password
-                    };
-
-                    var jsonData = JSON.stringify(data);
-                    $http.post(url, jsonData)
-                    .then(function(result){
-                        $scope.loggedIn = true;
-                        $state.go('home');
-                    })
-                    .catch(function(err){
-                        console.log(err);
-                    });
+            $scope.submitSignUp = function(){
+                var url = 'berlinevents/signup';
+                var username = $scope.username;
+                var email = $scope.email;
+                var password = $scope.password;
+                var data = {
+                    username : username,
+                    email : email,
+                    password : password
                 };
-            }
+                var jsonData = JSON.stringify(data);
+                $http.post(url, jsonData)
+                .then(function(result){
+                    LoggedInServ.registerUser();
+                    $state.go('home',{
+                        isLoggedIn: true
+                    });
+                })
+                .catch(function(err){
+                    console.log(err);
+                });
+            };
         }
+
     })
     /*
     .state('login', {
