@@ -25,21 +25,12 @@ app.use(bodyParser.urlencoded({extended: false}));
 app.use(express.static("./public"));
 
 app.get('/berlinevents', function(req, res){
-    db.query('SELECT * FROM links LEFT JOIN comments on comments.link_id = links.id ORDER by created_at DESC').then(function(results) {
-        // tempLinks = {
-        //
-        // };
-        // if (tempLinks[link.id]) {
-        //     tempLinks[link.id].numberOfComments++
-        // } else {
-        //
-        // }
-        // for (var i )
+    db.query('SELECT links.id, links.link, links.title, links.created_at, count(comments.link_id) FROM links LEFT JOIN comments on comments.link_id = links.id GROUP BY links.id ORDER by links.created_at DESC').then(function(results) {
+        console.log(results.rows);
         res.json(
             {
                 links: results.rows
             });
-
     }).catch(function(err) {
         console.log(err);
         res.json({
@@ -49,11 +40,11 @@ app.get('/berlinevents', function(req, res){
 });
 
 app.post('/berlinevents/link', function(req, res){
-    console.log(req.body);
+    // console.log(req.body);
     db.query("INSERT INTO links(link, title) VALUES ($1, $2) RETURNING id",
     [req.body.url, req.body.title])
     .then (function(result) {
-        console.log(result + "Risultato Post");
+        // console.log(result + "Risultato Post");
         res.json({
             title: req.body.title,
             link: req.body.url,
@@ -76,7 +67,7 @@ function requireNotLoggedIn(req, res, next) {
 }
 
 app.post('/berlinevents/signup', function(req, res) {
-    console.log(req.body);
+    // console.log(req.body);
     if (req.body.username && req.body.email && req.body.password) {
         hashPassword(req.body.password)
             .then(function(hash){
@@ -92,7 +83,7 @@ app.post('/berlinevents/signup', function(req, res) {
                     'username' : req.session.user.username,
                     'email' :  req.session.user.email
                 });
-                console.log(req.session.user.username);
+                // console.log(req.session.user.username);
             });
             }).catch(function(err){
                 console.log(err);
@@ -109,7 +100,7 @@ app.post('/berlinevents/login', function(req, res) {
     if (req.body.username && req.body.password){
         db.query("SELECT users.username, users.id, password FROM users WHERE username = $1",
         [req.body.username]).then(function(result){
-            console.log(result.rows);
+            // console.log(result.rows);
             checkPassword(req.body.password, result.rows[0].password).then(function(doesMatch){
                 if(doesMatch){
                     console.log('match!');
@@ -123,7 +114,7 @@ app.post('/berlinevents/login', function(req, res) {
                     res.send({
                         'username' : req.session.user.username
                     });
-                    console.log(req.session.user.username);
+                    // console.log(req.session.user.username);
                 } else {
                     console.log('No match');
                 }
@@ -146,12 +137,12 @@ app.get('/link/:id', function(req, res) {
     .then(function(result) {
         return db.query('SELECT * FROM  comments WHERE link_id = $1 ORDER by created_at DESC',[req.params.id])
         .then(function (result2){
-            console.log("link/id");
-            console.log(result2.rows);
+            // console.log("link/id");
+            // console.log(result2.rows);
             res.json({
                 link : result.rows[0],
-                comments : result2.rows,
-                allComments: result2.rows.length
+                comments : result2.rows
+                // allComments: result2.rows.length
             });
             console.log(result2);
         }).catch(function(err) {
@@ -164,11 +155,12 @@ app.get('/link/:id', function(req, res) {
 //function for comment
 function handleComment(req, res) {
     console.log( req.body);
-    db.query("INSERT INTO comments(username, comment_text, link_id) VALUES ($1, $2, $3) RETURNING id",
-    [req.session.user.username , req.body.text, req.params.id])
+    db.query("INSERT INTO comments( username, user_id, comment_text, link_id) VALUES ($1, $2, $3, $4) RETURNING id",
+    [req.session.user.username ,req.session.user.id , req.body.text, req.params.id])
     .then(function(result) {
         res.json({
             username : req.session.user.username,
+            user_id : req.session.user.id,
             comment_text : req.body.text,
             id : result.rows[0].id
         });

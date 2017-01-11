@@ -8,7 +8,6 @@
     <li ng-if="isLoggedIn" class=""><a ui-sref="logout">Logout</a></li>
 </ul>
 <div ng-repeat="link in recentLinks" class="links">
-    <a href="{{link.link}}" target="_blank"> {{link.title}}</a>
-    <a href="#/comment/{{link.id}}"> {{}}numero commenti</a>
-
+    <a href="{{link.link}}" target="_blank"> {{link.title}}</a><br>
+    <a href="#/comment/{{link.id}}"> {{link.count}} comments</a>
 </div>

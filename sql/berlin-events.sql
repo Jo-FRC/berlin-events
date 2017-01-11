@@ -20,7 +20,8 @@ CREATE TABLE users(
 CREATE TABLE comments(
     id SERIAL PRIMARY KEY,
     link_id INTEGER NOT NULL,
-    username VARCHAR(255) NOT NULL,
+    username VARCHAR(300) NOT NULL,
+    user_id INTEGER NOT NULL,
     comment_text VARCHAR(255) NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );

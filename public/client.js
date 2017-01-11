@@ -48,7 +48,7 @@ var myApp = angular.module('myApp', ['ui.router', 'ngCookies'])
                 });
             }
 
-        })
+        });
 
     };
 })
@@ -72,14 +72,14 @@ var myApp = angular.module('myApp', ['ui.router', 'ngCookies'])
             }
 
             $http.get(url).then(function(result){
-                // console.log(result.data.links);
+                console.log(result.data.links);
                 $scope.recentLinks = result.data.links;
                 console.log($scope.recentLinks);
             });
         }
     })
     .state('login', {
-        url : '/login?next',
+        url : '/login?next&id',
         templateUrl: '/login.html',
         controller: function($scope, $http, $state, LoggedInServ, $cookies, $stateParams){
             console.log($stateParams);
@@ -87,38 +87,21 @@ var myApp = angular.module('myApp', ['ui.router', 'ngCookies'])
                 LoggedInServ.submitLogin($scope.username, $scope.password)
                 .then(function(){
                     $scope.loggedIn = true;
-                    console.log($scope.loggedIn);
-                    $state.go($stateParams.next || 'home',{
-                        isLoggedIn: true
-                    });
+                    console.log($stateParams);
+                    if ($stateParams.next){
+                        $state.go($stateParams.next,{
+                            id: $stateParams.id,
+                            isLoggedIn: true
+                        });
+                    } else {
+                        $state.go('home', {
+                            isLoggedIn: true,
+
+                        });
+                    }
 
                 });
             };
-            // $scope.submitLogin = function(){
-            //     console.log(88888);
-            //     var url = 'berlinevents/login';
-            //     var username = $scope.username;
-            //     var password = $scope.password;
-            //     var data = {
-            //         username : username,
-            //         password : password
-            //     };
-            //
-            //     var jsonData = JSON.stringify(data);
-            //     console.log(jsonData);
-            //
-            //     $http.post(url, jsonData).then(function(result){
-            //         console.log(333);
-            //         $scope.loggedIn = true;
-            //         console.log(result);
-            //         $state.go('home');
-            //     })
-            //     .catch(function(err){
-            //         console.log(err);
-            //         $scope.notvaliduser = true;
-            //     });
-            // };
-            // }
         }
     })
     .state('signup', {
@@ -213,6 +196,7 @@ var myApp = angular.module('myApp', ['ui.router', 'ngCookies'])
             };
 
         } else {
+            console.log('test');
             $state.go('login', {
                 next: 'addlink'
             });
@@ -223,7 +207,6 @@ var myApp = angular.module('myApp', ['ui.router', 'ngCookies'])
     url : '/comment/:id',
     templateUrl: '/comments.html',
     controller: function($scope, $http, $state, LoggedInServ, $cookies, $stateParams){
-        console.log($stateParams);
         $scope.isLoggedIn = LoggedInServ.checkIfLoggedIn();
         if ($scope.isLoggedIn) {
             LoggedInServ.getUsername().then(function(name){
@@ -232,9 +215,8 @@ var myApp = angular.module('myApp', ['ui.router', 'ngCookies'])
             $scope.recentComments = [];
             $scope.comment = {};
             var url = '/link/' + $stateParams.id;
-            console.log(allComments);
+
             $http.get(url).then(function(result){
-                $scope.allComments = result.data.allComments;
                 console.log(result.data.comments);
                 $scope.recentComments = result.data.comments;
             });
@@ -245,11 +227,13 @@ var myApp = angular.module('myApp', ['ui.router', 'ngCookies'])
                 $http.post(url, comment).then(function(result){
                     console.log(result);
                     $scope.recentComments.unshift(result.data);
+                    delete $scope.comment.text;
                 });
             };
         } else {
             $state.go('login', {
-                next: 'comments'
+                next: 'comments',
+                id: $stateParams.id
             });
         }
     }

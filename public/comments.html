@@ -1,7 +1,7 @@
 <div id="addComment" >
     <p>{{username}}</p><br>
     <input ng-model="comment.text" type="text" name="comment" class="insert" placeholder="Comment" required><br>
-    <button ng-click="addComment(); link.title=null; link.url=null" id="upload" class="load-pic btn btn-info" >Add</button>
+    <button ng-click="addComment()" id="upload" class="load-pic btn btn-info" href="#/comment/{{link.id}}">Add</button>
 </div>
 <br><br>
 
