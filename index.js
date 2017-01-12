@@ -151,6 +151,7 @@ function handleComment(req, res) {
     });
 }
 
+
 //get the page with comments
 app.get('/link/:id', function(req, res) {
     console.log('/link/' + req.params.id + ' - ' + req.body);
@@ -172,6 +173,8 @@ app.get('/link/:id', function(req, res) {
         });
     });
 });
+
+
 
 
 //change roter to /image/:id/comment
