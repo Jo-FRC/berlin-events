@@ -1,3 +1,4 @@
+<nav class="navbar navbar-inverse bg-inverse">
 <p id="hiUsername" ng-if="isLoggedIn">Hi {{username}}</p>
 <div id="pinco" >
     <ul id="colore" class="nav nav-pills pull-right ">
@@ -10,9 +11,9 @@
         <li ng-if="isLoggedIn" ><a ui-sref="logout">Logout</a></li>
     </ul>
 </div>
-<br>
-<br>
-<br>
+</nav>
+
+
 
 <div class="jumbotron">
     <div ng-repeat="link in recentLinks" class="links">

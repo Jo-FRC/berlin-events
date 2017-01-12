@@ -1,10 +1,21 @@
-<div class="jumbotron">
+<div class="jumbotron col-md-6 col-md-offset-3">
 
-    <div id="link" >
-        <input ng-model="link.title" type="text" name="title" class="insert" placeholder="Title" required></input><br>
-        <input ng-model="link.url" type="text" name="url" class="insert" placeholder="Url" required></input><br>
-        <button ng-click="upload(); link.title=null; link.url=null" id="upload" class="load-pic btn btn-info" href="#/berlinevents">Upload</button>
+    <form  id="link" name="form" role="form">
+        <div id="titlesection" class="form-group" ng-class="{ 'has-error': form.title.$dirty && form.title.$error.required }">
+        <label for="title">Title</label>
+        <input id="title" class="form-control" ng-model="link.title" type="text" name="title" class="insert" required></input><br>
+        <span ng-show="form.title.$dirty && form.title.$error.required" class="help-block">Title is required</span>
+
     </div>
+
+        <div id="linksection" class="form-group" ng-class="{ 'has-error': form.url.$dirty && form.url.$error.required }">
+        <label for="url">Url</label>
+        <input id="url" class="form-control" ng-model="link.url" type="text" name="url" class="insert"  required></input><br>
+        <span ng-show="form.url.$dirty && form.url.$error.required" class="help-block">Url is required</span>
+
+        </div>
+        <button  ng-disabled="form.$invalid || vm.dataLoading" class="btn btn-primary"  ng-click="upload(); link.title=null; link.url=null" id="upload" class="load-pic btn btn-info" href="#/berlinevents">Upload</button>
+    </form>
     <br><br>
 
     <div ng-repeat="link in recentLinks" class="links">
