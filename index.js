@@ -132,6 +132,26 @@ app.post('/berlinevents/login', function(req, res) {
 
 
 
+    //function for comment
+function handleComment(req, res) {
+    console.log( req.body);
+    db.query("INSERT INTO comments( username, user_id, comment_text, link_id, parent_id) VALUES ($1, $2, $3, $4, $5) RETURNING id",
+    [req.session.user.username ,req.session.user.id , req.body.text, req.params.id, req.body.parent_id || null])
+    .then(function(result) {
+        res.json({
+            username : req.session.user.username,
+            user_id : req.session.user.id,
+            comment_text : req.body.text,
+            id : result.rows[0].id,
+            parent_id : req.body.parent_id
+        });
+    }).catch(function(err) {
+        console.log(err);
+        res.sendStatus(500);
+    });
+}
+
+
 //get the page with comments
 app.get('/link/:id', function(req, res) {
     console.log('/link/' + req.params.id + ' - ' + req.body);
@@ -154,23 +174,9 @@ app.get('/link/:id', function(req, res) {
     });
 });
 
-//function for comment
-function handleComment(req, res) {
-    console.log( req.body);
-    db.query("INSERT INTO comments( username, user_id, comment_text, link_id) VALUES ($1, $2, $3, $4) RETURNING id",
-    [req.session.user.username ,req.session.user.id , req.body.text, req.params.id])
-    .then(function(result) {
-        res.json({
-            username : req.session.user.username,
-            user_id : req.session.user.id,
-            comment_text : req.body.text,
-            id : result.rows[0].id
-        });
-    }).catch(function(err) {
-        console.log(err);
-        res.sendStatus(500);
-    });
-}
+
+
+
 //change roter to /image/:id/comment
 app.post('/link/:id', handleComment);
 //change roter to /image/:id/comment

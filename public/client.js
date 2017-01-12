@@ -160,11 +160,14 @@ var myApp = angular.module('myApp', ['ui.router', 'ngCookies', 'service.LoggedIn
                 });
                 $scope.recentComments = [];
                 $scope.comment = {};
+                $scope.parent_id = [];
                 var url = '/link/' + $stateParams.id;
 
                 $http.get(url).then(function(result){
                     console.log(result.data.comments);
                     $scope.recentComments = result.data.comments;
+                    // $scope.parent_id = x;
+                    console.log(result);
                 });
 
                 $scope.addComment = function(){
@@ -177,11 +180,15 @@ var myApp = angular.module('myApp', ['ui.router', 'ngCookies', 'service.LoggedIn
                         delete $scope.comment.text;
                     });
                 };
+                $scope.reply = function(){
+                    $scope.replysection = true;
+                };
                 $scope.respond = function(){
                     var url = '/link/' + $stateParams.id;
                     var comment = $scope.comment;
+                    var parent_id = $scope.parent_id;
                     console.log(comment);
-                    $http.post(url, comment).then(function(result){
+                    $http.post(url, comment, parent_id).then(function(result){
                         console.log(result);
                         $scope.responded = true;
                         $scope.recentComments.unshift(result.data);

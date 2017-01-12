@@ -25,6 +25,7 @@ CREATE TABLE comments(
     username VARCHAR(300) NOT NULL,
     user_id INTEGER NOT NULL,
     comment_text VARCHAR(255) NOT NULL,
+    parent_id INTEGER, 
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
