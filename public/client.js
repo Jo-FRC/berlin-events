@@ -18,7 +18,7 @@ var myApp = angular.module('myApp', ['ui.router', 'ngCookies', 'service.LoggedIn
                 });
             }
             $http.get(url).then(function(result){
-                console.log(result.data.links);
+                // console.log(result.data.links);
                 $scope.recentLinks = result.data.links;
                 console.log($scope.recentLinks);
             });
