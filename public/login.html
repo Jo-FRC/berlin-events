@@ -1,13 +1,27 @@
-<form method="post" action="/berlinevents/login">
-<div id="loginsection">
-    <input ng-model="username" type="text" name="username" class="insert" placeholder="Username" required></input><br>
-    <input ng-model="password" type="password" name="password" class="insert" placeholder="Password" required></input><br>
-    <button type="button" ng-click="submitLogin(); link.title=null; link.url=null" id="loginbutton" class="btn btn-info">Login</button>
-</div>
-<br><br>
-</form>
-  <p>If you are not registred please <a href="#/signup">signup</a></p>
+<div class="jumbotron col-md-6 col-md-offset-3">
+    <!-- <div class="col-md-6 col-md-offset-3"> -->
+    <form name="form" method="post" action="/berlinevents/login" role="form">
+        <div id="loginsection" class="form-group" ng-class="{ 'has-error': form.username.$dirty && form.username.$error.required }">
+            <label for="username">Username</label>
 
-<div ng-if="notvaliduser">
-    <h2>Invalid username or password, please try again</h2>
+            <input id="username" class="form-control" ng-model="username" type="text" name="username" class="insert"  required></input><br>
+            <span ng-show="form.username.$dirty && form.username.$error.required" class="help-block">Username is required</span>
+        </div>
+        <div class="form-group" ng-class="{ 'has-error': form.password.$dirty && form.password.$error.required }">
+            <label for="username">Password</label>
+
+            <input id="password" class="form-control" ng-model="password" type="password" name="password" class="insert" required></input><br>
+            <span ng-show="form.password.$dirty && form.password.$error.required" class="help-block">Password is required</span>
+        </div>
+        <button type="button"  ng-disabled="form.$invalid || vm.dataLoading" class="btn btn-primary" ng-click="submitLogin(); link.title=null; link.url=null" id="loginbutton" class="btn btn-info">Login</button>
+        <img ng-if="vm.dataLoading" src="data:image/gif;base64,R0lGODlhEAAQAPIAAP///wAAAMLCwkJCQgAAAGJiYoKCgpKSkiH/C05FVFNDQVBFMi4wAwEAAAAh/hpDcmVhdGVkIHdpdGggYWpheGxvYWQuaW5mbwAh+QQJCgAAACwAAAAAEAAQAAADMwi63P4wyklrE2MIOggZnAdOmGYJRbExwroUmcG2LmDEwnHQLVsYOd2mBzkYDAdKa+dIAAAh+QQJCgAAACwAAAAAEAAQAAADNAi63P5OjCEgG4QMu7DmikRxQlFUYDEZIGBMRVsaqHwctXXf7WEYB4Ag1xjihkMZsiUkKhIAIfkECQoAAAAsAAAAABAAEAAAAzYIujIjK8pByJDMlFYvBoVjHA70GU7xSUJhmKtwHPAKzLO9HMaoKwJZ7Rf8AYPDDzKpZBqfvwQAIfkECQoAAAAsAAAAABAAEAAAAzMIumIlK8oyhpHsnFZfhYumCYUhDAQxRIdhHBGqRoKw0R8DYlJd8z0fMDgsGo/IpHI5TAAAIfkECQoAAAAsAAAAABAAEAAAAzIIunInK0rnZBTwGPNMgQwmdsNgXGJUlIWEuR5oWUIpz8pAEAMe6TwfwyYsGo/IpFKSAAAh+QQJCgAAACwAAAAAEAAQAAADMwi6IMKQORfjdOe82p4wGccc4CEuQradylesojEMBgsUc2G7sDX3lQGBMLAJibufbSlKAAAh+QQJCgAAACwAAAAAEAAQAAADMgi63P7wCRHZnFVdmgHu2nFwlWCI3WGc3TSWhUFGxTAUkGCbtgENBMJAEJsxgMLWzpEAACH5BAkKAAAALAAAAAAQABAAAAMyCLrc/jDKSatlQtScKdceCAjDII7HcQ4EMTCpyrCuUBjCYRgHVtqlAiB1YhiCnlsRkAAAOwAAAAAAAAAAAA==" />
+
+        <br><br>
+    </form>
+    <p>If you are not registered please <a href="#/signup">signup</a></p>
+
+    <div ng-if="notvaliduser">
+        <h2>Invalid username or password, please try again</h2>
+    </div>
+</div>
 </div>

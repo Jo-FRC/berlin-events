@@ -12,9 +12,11 @@
 
 
     <ul class="nav nav-pills pull-right">
+        <p ng-if="isLoggedIn">Hi {{username}}</p>
+
         <li class="active"><a href="#/berlinevents">Home</a></li>
         <li class=""><a ui-sref="addlink">Add Link</a></li>
-        <li ng-if="!loggedIn" class=""><a ui-sref="login">Login</a></li>
-        <li ng-if="!loggedIn" class=""><a ui-sref="signup">Signup</a></li>
-        <li ng-if="loggedIn" class=""><a ui-sref="logout">Logout</a></li>
+        <li ng-if="!isLoggedIn" class=""><a ui-sref="login">Login</a></li>
+        <li ng-if="!isLoggedIn" class=""><a ui-sref="signup">Signup</a></li>
+        <li ng-if="isLoggedIn" class=""><a ui-sref="logout">Logout</a></li>
     </ul>

@@ -1,11 +1,14 @@
-<div id="link" >
-    <input ng-model="link.title" type="text" name="title" class="insert" placeholder="Title" required></input><br>
-    <input ng-model="link.url" type="text" name="url" class="insert" placeholder="Url" required></input><br>
-    <button ng-click="upload(); link.title=null; link.url=null" id="upload" class="load-pic btn btn-info" href="#/berlinevents">Upload</button>
-</div>
-<br><br>
+<div class="jumbotron">
 
-<div ng-repeat="link in recentLinks" class="links">
-    <a href="{{link.link}}" target="_blank"> {{link.title}}</a>
+    <div id="link" >
+        <input ng-model="link.title" type="text" name="title" class="insert" placeholder="Title" required></input><br>
+        <input ng-model="link.url" type="text" name="url" class="insert" placeholder="Url" required></input><br>
+        <button ng-click="upload(); link.title=null; link.url=null" id="upload" class="load-pic btn btn-info" href="#/berlinevents">Upload</button>
+    </div>
+    <br><br>
 
+    <div ng-repeat="link in recentLinks" class="links">
+        <a href="{{link.link}}" target="_blank"> {{link.title}}</a>
+
+    </div>
 </div>

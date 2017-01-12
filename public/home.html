@@ -1,13 +1,23 @@
-<ul class="nav nav-pills pull-right">
-    <p ng-if="isLoggedIn">Hi {{username}}</p>
+<p id="hiUsername" ng-if="isLoggedIn">Hi {{username}}</p>
+<div id="pinco" >
+    <ul id="colore" class="nav nav-pills pull-right ">
 
-    <li class="active"><a href="#/berlinevents">Home</a></li>
-    <li class=""><a ui-sref="addlink">Add Link</a></li>
-    <li ng-if="!isLoggedIn" class=""><a ui-sref="login">Login</a></li>
-    <li ng-if="!isLoggedIn" class=""><a ui-sref="signup">Signup</a></li>
-    <li ng-if="isLoggedIn" class=""><a ui-sref="logout">Logout</a></li>
-</ul>
-<div ng-repeat="link in recentLinks" class="links">
-    <a href="{{link.link}}" target="_blank"> {{link.title}}</a><br>
-    <a href="#/comment/{{link.id}}"> {{link.count}} comments</a>
+        <li ><a href="#/berlinevents">Home</a></li>
+        <li ><a ui-sref="addlink">Add Link</a></li>
+        <li ng-if="!isLoggedIn" ><a ui-sref="login">Login</a></li>
+        <li ng-if="!isLoggedIn" ><a ui-sref="signup">Signup</a></li>
+        <li ng-if="isLoggedIn" ><a ui-sref="profile">Profile</a></li>
+        <li ng-if="isLoggedIn" ><a ui-sref="logout">Logout</a></li>
+    </ul>
+</div>
+<br>
+<br>
+<br>
+
+<div class="jumbotron">
+    <div ng-repeat="link in recentLinks" class="links">
+        <a href="{{link.link}}" target="_blank"> {{link.title}}</a>
+        <a id="numComments" href="#/comment/{{link.id}}"> {{link.count}} comments</a>
+    </div>
+
 </div>

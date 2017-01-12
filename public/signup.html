@@ -1,10 +1,25 @@
-<form method="post" action='/berlinevents/signup'>
-<div id="signupsection">
-    <input ng-model="username" type="text" name="username" class="insert" placeholder="Username" required></input><br>
-    <input ng-model="email" type="text" name="email" class="insert" placeholder="Email" required></input><br>
-    <input ng-model="password" type="password" name="password" class="insert" placeholder="Password" required></input><br>
-    <button ng-click="submitSignUp(); username=null; email=null; password=null" id="signupbutton" class="btn btn-info">Signup</button>
+<div class="jumbotron col-md-6 col-md-offset-3">
+    <form name="form" method="post" role="form" action='/berlinevents/signup'>
+        <div id="signupsection">
+            <div class="form-group" ng-class="{ 'has-error': form.username.$dirty && form.username.$error.required }">
+                <label for="username">Username</label>
+                <input  id="username" class="form-control" ng-model="username" type="text" name="username" class="insert"  required></input><br>
+                <span ng-show="form.username.$dirty && form.username.$error.required" class="help-block">Username is required</span>
+            </div>
+            <div class="form-group" ng-class="{ 'has-error': form.email.$dirty && form.email.$error.required }">
+                <label for="username">Email</label>
+                <input id="email" class="form-control" ng-model="email" type="email" name="email" class="insert"  required></input><br>
+                <span ng-show="form.email.$dirty && form.email.$error.required" class="help-block">Email is required</span>
+            </div>
+            <div class="form-group" ng-class="{ 'has-error': form.password.$dirty && form.password.$error.required }">
+                <label for="password">Password</label>
+                <input id="password" class="form-control" ng-model="password" type="password" name="password" class="insert"  required></input><br>
+                <span ng-show="form.password.$dirty && form.password.$error.required" class="help-block">Password is required</span>
+            </div>
+            <button ng-disabled="form.$invalid || vm.dataLoading" class="btn btn-primary" ng-click="submitSignUp(); username=null; email=null; password=null" id="signupbutton" class="btn btn-info">Signup</button>
+        </div>
+    </form>
+    <br><br>
+    <p>If you are registered please <a href="#/login">Login</a></p>
+
 </div>
-</form>
-<br><br>
- <a href="#/login">Cancel</a>

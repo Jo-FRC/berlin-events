@@ -1,10 +1,15 @@
-<div id="addComment" >
-    <p>{{username}}</p><br>
-    <input ng-model="comment.text" type="text" name="comment" class="insert" placeholder="Comment" required><br>
-    <button ng-click="addComment()" id="upload" class="load-pic btn btn-info" href="#/comment/{{link.id}}">Add</button>
-</div>
-<br><br>
+<div class="jumbotron">
 
-<div id='comments' ng-repeat="comment in recentComments">
-<p> {{comment.username}}: {{comment.comment_text}} </p>
+    <div id="addComment" >
+        <p>{{username}}</p><br>
+        <input ng-model="comment.text" type="text" name="comment" class="insert" placeholder="Comment" required><br>
+        <button ng-click="addComment()" id="upload" class="load-pic btn btn-info" href="#/comment/{{link.id}}">Add</button>
+    </div>
+    <br><br>
+
+    <div id='comments' ng-repeat="comment in recentComments">
+        <p class="comments"> {{comment.username}}: {{comment.comment_text}} </p>
+        <button class="btn btn-outline-success" type="button" ng-click="respond()">Respond</button>
+        <input ng-if="responded" ng-model="comment.text" type="text" name="comment" class="insert" placeholder="Comment" required><br>
+    </div>
 </div>

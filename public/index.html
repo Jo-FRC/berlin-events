@@ -5,24 +5,24 @@
     <meta name="viewport" content="width = device-width, initiale-scale=1">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
     <meta charset="utf-8">
+    <link rel="stylesheet" href="style.css" type="text/css">
+
     <title>Berlin Events</title>
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.8/angular.min.js"></script>
 </head>
 <body ng-app="myApp">
     <div class="container">
         <div class="page-header">
-        
-            <h1><a href="#/home">Berlin Events</a></h1>
 
-    </div>
+            <h1><a id="title" href="#/home">Berlin Events</a></h1>
+
+        </div>
         <!-- <div ng-controller="linksUpdate"> -->
-            <div class="row">
-                <div class="jumbotron">
-                    <div class="header">
+        <div class="row">
 
-                    <div ui-view></div>
-
-
+            <!-- <header ng-include="'./nav.html'"></header> -->
+            <div class="header">
+                <div ui-view></div>
 
 
 
@@ -34,12 +34,15 @@
 
 
 
-                    </div>
-                <!-- </div> -->
+
+
             </div>
+            <!-- </div> -->
+
         </div>
 
     </div>
+    <script src="service/service.js" charset="utf-8"></script>
     <script src="//unpkg.com/angular-ui-router/release/angular-ui-router.min.js"></script>
     <script src="client.js"></script>
     <script src="./angular-cookies.js"></script>
