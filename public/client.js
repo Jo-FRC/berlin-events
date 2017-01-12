@@ -1,4 +1,4 @@
-var myApp = angular.module('myApp', ['ui.router', 'ngCookies'])
+var myApp = angular.module('myApp', ['ui.router', 'ngCookies', 'service.LoggedInServ'])
 
 .config(['$urlRouterProvider', '$stateProvider', function($urlRouterProvider, $stateProvider){
     $urlRouterProvider.otherwise('/berlinevents');
@@ -17,7 +17,6 @@ var myApp = angular.module('myApp', ['ui.router', 'ngCookies'])
                     $scope.username = name;
                 });
             }
-
             $http.get(url).then(function(result){
                 console.log(result.data.links);
                 $scope.recentLinks = result.data.links;
@@ -43,7 +42,6 @@ var myApp = angular.module('myApp', ['ui.router', 'ngCookies'])
                     } else {
                         $state.go('home', {
                             isLoggedIn: true,
-
                         });
                     }
 
@@ -139,7 +137,6 @@ var myApp = angular.module('myApp', ['ui.router', 'ngCookies'])
                         $scope.recentLinks.unshift(result.data);
                         $state.go('home');
                     });
-
                 };
 
             } else {

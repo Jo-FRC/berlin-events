@@ -1,7 +1,6 @@
+angular.module('service.LoggedInServ', [ 'ngCookies'])
 
-angular.module('app.service.LoggedInServ', ['ui.router', 'ngCookies'])
-
-myApp.service('LoggedInServ', function($http, $state, $cookies){
+.service('LoggedInServ', function($http, $state, $cookies){
     var LoggedInService = this;
     var loggedIn = $cookies.get('isLoggedIn');
     this.submitLogin = function(username, password){
