@@ -44,9 +44,7 @@ angular.module('service.LoggedInServ', [ 'ngCookies'])
             } else {
                 $http.get('/getUserinfo').then(function(result){
                     LoggedInService.username = result.data.username;
-                    LoggedInService.email = result.data.email;
-
-                    console.log(result.data);
+                    // console.log(result.data);
                     resolve(result.data.username);
                 });
             }

@@ -36,8 +36,8 @@ app.get('/berlinevents', function(req, res){
 
 app.post('/berlinevents/link', function(req, res){
     // console.log(req.body);
-    db.query("INSERT INTO links(link, title) VALUES ($1, $2) RETURNING id",
-    [req.body.url, req.body.title])
+    db.query("INSERT INTO links(link, title, user_id, username) VALUES ($1, $2, $3, $4) RETURNING id",
+    [req.body.url, req.body.title, req.session.user.id, req.session.user.username])
     .then (function(result) {
         // console.log(result + "Risultato Post");
         res.json({
@@ -79,17 +79,19 @@ app.post('/berlinevents/signup', function(req, res) {
 });
 
 app.get('/getUserinfo', function(req, res){
-    db.query('SELECT users.username, users.email, users.id, links.id, links.link, links.title, links.created_at, comment_text FROM users LEFT JOIN links on links.id = users.id LEFT JOIN comments on comments.link_id = links.id').then(function(results) {
-        // console.log(results);
-        req.session.user = {
-            email :results.rows[0].email,
-            username : results.rows[0].username,
-            id : results.rows[0].id,
-            links : results.rows[0].links,
-            comment_text : results.rows[0].comments
-        };
-        console.log(req.session.user);
-        res.json(results.rows[0]);
+    Promise.all([
+        db.query('SELECT users.username, users.email, links.id, links.link, links.title FROM users LEFT JOIN links on links.user_id = users.id  WHERE users.id = $1', [req.session.user.id]),
+        db.query('SELECT comment_text, comments.link_id FROM comments WHERE (comments.user_id = $1)',[req.session.user.id])
+    ]).then(function(results) {
+        console.log(results[0].rows);
+        // console.log(req.session.user);
+        res.json({
+            email :results[0].rows[0].email,
+            username : results[0].rows[0].username,
+            id : results[0].rows[0].id,
+            links : results[0].rows,
+            comments : results[1].rows,
+        });
     }).catch(function(err){
         console.log(err);
     });
