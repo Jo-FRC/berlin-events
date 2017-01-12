@@ -6,6 +6,8 @@ CREATE TABLE links(
     id SERIAL PRIMARY KEY,
     link VARCHAR(300) NOT NULL,
     title VARCHAR(255) NOT NULL,
+    username VARCHAR(300) NOT NULL,
+    user_id INTEGER NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 

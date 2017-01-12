@@ -8,7 +8,6 @@ var myApp = angular.module('myApp', ['ui.router', 'ngCookies', 'service.LoggedIn
         templateUrl: '/home.html',
         controller: function($scope, $http, LoggedInServ, $cookies){
             var url = '/berlinevents';
-            // var isLoggedIn = LoggedInServ.checkIfLoggedIn();
             $scope.isLoggedIn = LoggedInServ.checkIfLoggedIn();
             console.log(LoggedInServ.checkIfLoggedIn());
             $scope.recentLinks = [];
@@ -126,7 +125,7 @@ var myApp = angular.module('myApp', ['ui.router', 'ngCookies', 'service.LoggedIn
                         delete $scope.linkUpload;
                         return;
                     }
-
+                    
                     var data = {
                         title : title,
                         url : link
@@ -203,10 +202,16 @@ var myApp = angular.module('myApp', ['ui.router', 'ngCookies', 'service.LoggedIn
                 LoggedInServ.getUsername().then(function(name){
                     $scope.username = name;
                 });
-                $scope.profile = function(){
-
-                };
             }
+            var url = '/getUserinfo';
+            $http.get(url).then(function(result){
+                $scope.username = result.data.username;
+                $scope.email = result.data.email;
+                $scope.link = result.data.links;
+                $scope.title = result.data.title;
+                $scope.comment = result.data.comments;
+                console.log(result.data.links);
+            });
         }
     });
 }]);
