@@ -9,17 +9,20 @@ var myApp = angular.module('myApp', ['ui.router', 'ngCookies', 'service.LoggedIn
         controller: function($scope, $http, LoggedInServ, $cookies){
             var url = '/berlinevents';
             $scope.isLoggedIn = LoggedInServ.checkIfLoggedIn();
-            console.log(LoggedInServ.checkIfLoggedIn());
+            // console.log(LoggedInServ.checkIfLoggedIn());
             $scope.recentLinks = [];
             if ($scope.isLoggedIn) {
                 LoggedInServ.getUsername().then(function(name){
                     $scope.username = name;
+                    $scope.$apply();
+                    console.log('this home username' + $scope.username);
+
                 });
             }
             $http.get(url).then(function(result){
                 // console.log(result.data.links);
                 $scope.recentLinks = result.data.links;
-                console.log($scope.recentLinks);
+                // console.log($scope.recentLinks);
             });
         }
     })
@@ -125,7 +128,7 @@ var myApp = angular.module('myApp', ['ui.router', 'ngCookies', 'service.LoggedIn
                         delete $scope.linkUpload;
                         return;
                     }
-                    
+
                     var data = {
                         title : title,
                         url : link
