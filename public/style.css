@@ -29,18 +29,21 @@ body {
 
 }
 #title:hover {
-    color: green;
+    color: firebrick;
+    font-weight:lighter;
     cursor: pointer;
     text-decoration: none !important;
 }
 
 li a:hover {
-    color: green;
+    color: darkslategrey;
+    font-weight:lighter;
     border: 1px green solid;
     border-radius: 17px;
 }
 .links a:hover {
-    color: green;
+    color: darkslategrey;
+    font-weight:lighter;
     cursor: pointer;
 }
 
@@ -77,7 +80,6 @@ li a {
 }
 
 #comments {
-    border-bottom: solid olive 1px;
     padding: 15px;
     color: olive;
 
@@ -91,7 +93,23 @@ li a {
     background-color: rgba(0, 0, 0, 0.8);
 }
 
+.getReply {
+    float: right;
+}
 
+label {
+    color: black;
+}
+
+p a{
+    text-decoration: none !important;
+    color: black;
+}
+
+p a:hover{
+    color: darkslategrey;
+    font-weight:lighter;
+}
 
 
 

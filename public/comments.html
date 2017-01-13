@@ -2,10 +2,10 @@
 
     <div id="addComment" >
         <p>{{username}} :</p><br>
-        <a href="{{link.link}}" target="_blank"> {{link.title}}</a>
+        <p><a href="{{link.link}}" target="_blank"> {{link.title}}</a></p>
         <form name="form" role="form">
             <div id="commentsection" class="form-group" >
-                <label for="username">Comment</label>
+                <label for="comment">Comment</label>
                 <input id="comment" class="form-control" ng-model="comment.text" type="text" name="comment" class="insert" required><br>
             </div>
             <button type="button"  ng-disabled="form.$invalid || vm.dataLoading" class="btn btn-primary"  ng-click="addComment()" id="upload" class="load-pic btn btn-info" href="#/comment/{{link.id}}">Add</button>
@@ -23,7 +23,7 @@
                             <div class="comment-box">
                                 <div class="comment-head">
                                     <h6 class="comment-name by-author">{{comment.username}}</h6>
-                                    <button class="btn btn-outline-success" type="button" ng-click="reply()">Write reply</button>
+                                    <button type="button"  ng-disabled="form.$invalid || vm.dataLoading" class="btn btn-primary btn-sm getReply" class="btn btn-outline-success" ng-click="reply(comment.id)">Reply</button>
                                     <i class="fa fa-reply"></i>
                                     <i class="fa fa-heart"></i>
                                 </div>
@@ -32,13 +32,24 @@
                                 </div>
                             </div>
                         </div>
-                        <input ng-if="replysection" ng-model="comment.replyText" type="text" name="comment" class="insert" placeholder="Comment" required><br>
-                        <button ng-if="replysection" class="btn btn-outline-success" type="button" ng-click="respond(comment)">Reply</button>
+                        <form name="form" role="form">
+                        <div ng-if="replysection == comment.id" id="replySection" class="form-group" >  
+                        <label for="reply">Reply</label>
+                        <input id="comment" class="form-control" ng-if="replysection == comment.id" ng-model="comment.replyText" type="text" name="comment" class="insert" required><br>
+                        </div>
+                        <button type="button"  ng-disabled="form.$invalid || vm.dataLoading" class="btn btn-primary" ng-if="replysection == comment.id" class="btn btn-outline-success" ng-click="respond(comment)">Send</button>
+                        </form>
+
                         <ul class="comments-list reply-list">
                             <li>
                                 <div ng-repeat="reply in comment.replies"  class="comment-box">
                                     <div class="comment-head">
                                         <h6 class="comment-name">{{reply.username}}</h6>
+
+
+                                        <!-- <button type="button"  ng-disabled="form.$invalid || vm.dataLoading" class="btn btn-primary btn-sm getReply" class="btn btn-outline-success" ng-click="reply()">Write reply</button> -->
+
+
                                         <i class="fa fa-reply"></i>
                                         <i class="fa fa-heart"></i>
                                     </div>
@@ -46,6 +57,14 @@
                                         {{reply.comment_text}}
                                     </div>
                                 </div>
+
+                                <!-- <form name="form" role="form">
+                                <div ng-if="replysection" id="replySection" class="form-group" >
+                                <label for="reply">Reply</label>
+                                <input id="comment" class="form-control" ng-if="replysection" ng-model="comment.replyText" type="text" name="comment" class="insert" required><br>
+                                </div>
+                                <button type="button"  ng-disabled="form.$invalid || vm.dataLoading" class="btn btn-primary" ng-if="replysection" class="btn btn-outline-success" ng-click="respond(comment)">Reply</button>
+                                </form> -->
                             </li>
                         </ul>
                     </li>

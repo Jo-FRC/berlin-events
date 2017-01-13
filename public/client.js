@@ -182,8 +182,8 @@ var myApp = angular.module('myApp', ['ui.router', 'ngCookies', 'service.LoggedIn
                         delete $scope.comment.text;
                     });
                 };
-                $scope.reply = function(){
-                    $scope.replysection = true;
+                $scope.reply = function(commentID){
+                    $scope.replysection = commentID;
                 };
                 $scope.respond = function(comment){
                     delete $scope.replysection;
