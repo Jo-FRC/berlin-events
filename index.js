@@ -132,7 +132,55 @@ app.post('/berlinevents/login', function(req, res) {
 
 
 
-    //function for comment
+//get the page with comments
+app.get('/link/:id', function(req, res) {
+    console.log('/link/' + req.params.id + ' - ' + req.body);
+    db.query('SELECT * FROM links WHERE id =$1 ', [req.params.id])
+    .then(function(result) {
+        return db.query('SELECT * FROM  comments WHERE link_id = $1 ORDER by created_at DESC',[req.params.id])
+        .then(function (result2){
+            var commentsByParentId = {};
+            var final = [];
+            result2.rows.forEach(function(comment) {
+                if (!comment.parent_id) {
+                    final.push(comment);
+                } else {
+                    if (!commentsByParentId[comment.parent_id]) {
+                        commentsByParentId[comment.parent_id] = [];
+                    }
+                    commentsByParentId[comment.parent_id].push(comment);
+                }
+            });
+
+            addRepliesToComments(final);
+
+            function addRepliesToComments(comments) {
+                if (!comments) {
+                    return;
+                }
+                comments.forEach(function(comment) {
+                    comment.replies = commentsByParentId[comment.id];
+                    addRepliesToComments(comment.replies);
+                });
+                console.log('this is the final fucntion' + final);
+            }
+            // console.log("link/id");
+            // console.log(result2.rows);
+            res.json({
+                link : result.rows[0],
+                comments : final
+                // allComments: result2.rows.length
+            });
+            console.log(final);
+        }).catch(function(err) {
+            console.log(err);
+            res.sendStatus(500);
+        });
+    });
+});
+
+
+//function for comment
 function handleComment(req, res) {
     console.log( req.body);
     db.query("INSERT INTO comments( username, user_id, comment_text, link_id, parent_id) VALUES ($1, $2, $3, $4, $5) RETURNING id",
@@ -150,31 +198,6 @@ function handleComment(req, res) {
         res.sendStatus(500);
     });
 }
-
-
-//get the page with comments
-app.get('/link/:id', function(req, res) {
-    console.log('/link/' + req.params.id + ' - ' + req.body);
-    db.query('SELECT * FROM links WHERE id =$1 ', [req.params.id])
-    .then(function(result) {
-        return db.query('SELECT * FROM  comments WHERE link_id = $1 ORDER by created_at DESC',[req.params.id])
-        .then(function (result2){
-            // console.log("link/id");
-            // console.log(result2.rows);
-            res.json({
-                link : result.rows[0],
-                comments : result2.rows
-                // allComments: result2.rows.length
-            });
-            console.log(result2);
-        }).catch(function(err) {
-            console.log(err);
-            res.sendStatus(500);
-        });
-    });
-});
-
-
 
 
 //change roter to /image/:id/comment

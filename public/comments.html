@@ -2,6 +2,7 @@
 
     <div id="addComment" >
         <p>{{username}} :</p><br>
+        <a href="{{link.link}}" target="_blank"> {{link.title}}</a>
         <form name="form" role="form">
             <div id="commentsection" class="form-group" >
                 <label for="username">Comment</label>
@@ -31,28 +32,23 @@
                                 </div>
                             </div>
                         </div>
-                        <input ng-if="replysection" ng-model="comment.text" type="text" name="comment" class="insert" placeholder="Comment" required><br>
-                        <button ng-if="replysection" class="btn btn-outline-success" type="button" ng-click="respond()">Reply</button>
+                        <input ng-if="replysection" ng-model="comment.replyText" type="text" name="comment" class="insert" placeholder="Comment" required><br>
+                        <button ng-if="replysection" class="btn btn-outline-success" type="button" ng-click="respond(comment)">Reply</button>
                         <ul class="comments-list reply-list">
                             <li>
-                                <div ng-if="responded" class="comment-box">
+                                <div ng-repeat="reply in comment.replies"  class="comment-box">
                                     <div class="comment-head">
-                                        <h6 class="comment-name">{{comment.username}}</h6>
-                                        <span>hace 10 minutos</span>
+                                        <h6 class="comment-name">{{reply.username}}</h6>
                                         <i class="fa fa-reply"></i>
                                         <i class="fa fa-heart"></i>
                                     </div>
                                     <div class="comment-content">
-                                        {{comment.comment_text}}
+                                        {{reply.comment_text}}
                                     </div>
                                 </div>
                             </li>
                         </ul>
                     </li>
-
-                    <button class="btn btn-outline-success" type="button" ng-click="respond()">Reply</button>
-                    <input ng-if="responded" ng-model="comment.text" type="text" name="comment" class="insert" placeholder="Comment" required><br>
-
                 </ul>
             </div>
         </div>

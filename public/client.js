@@ -160,12 +160,14 @@ var myApp = angular.module('myApp', ['ui.router', 'ngCookies', 'service.LoggedIn
                 });
                 $scope.recentComments = [];
                 $scope.comment = {};
-                $scope.parent_id = [];
                 var url = '/link/' + $stateParams.id;
 
                 $http.get(url).then(function(result){
                     console.log(result.data.comments);
                     $scope.recentComments = result.data.comments;
+                    $scope.link = result.data.link;
+                    $scope.title = result.data.title;
+                    // console.log($scope.title);
                     // $scope.parent_id = x;
                     console.log(result);
                 });
@@ -183,16 +185,20 @@ var myApp = angular.module('myApp', ['ui.router', 'ngCookies', 'service.LoggedIn
                 $scope.reply = function(){
                     $scope.replysection = true;
                 };
-                $scope.respond = function(){
+                $scope.respond = function(comment){
+                    delete $scope.replysection;
                     var url = '/link/' + $stateParams.id;
-                    var comment = $scope.comment;
-                    var parent_id = $scope.parent_id;
-                    console.log(comment);
-                    $http.post(url, comment, parent_id).then(function(result){
+                    var commentData = {
+                        text : comment.replyText,
+                        parent_id : comment.id
+                    };
+                    console.log(commentData);
+                    $http.post(url, commentData).then(function(result){
                         console.log(result);
                         $scope.responded = true;
-                        $scope.recentComments.unshift(result.data);
-                        delete $scope.comment.text;
+                        comment.replies = comment.replies || [];
+                        comment.replies.unshift(result.data);
+                        delete comment.replyText;
                     });
                 };
             } else {
